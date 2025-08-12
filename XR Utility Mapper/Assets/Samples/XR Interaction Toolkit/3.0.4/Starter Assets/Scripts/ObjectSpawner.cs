@@ -190,6 +190,24 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
         /// Otherwise, it will spawn the prefab at the index.
         /// </remarks>
         /// <seealso cref="objectSpawned"/>
+        /// 
+
+        public string parentName = "SpawnedObjects"; // Dedicated parent name
+
+        private Transform parentContainer;
+
+        private void Start()
+        {
+
+            // Find existing parent in the scene or create it
+            GameObject parentObj = GameObject.Find(parentName);
+            if (parentObj == null)
+            {
+                parentObj = new GameObject(parentName);
+            }
+            parentContainer = parentObj.transform;
+        }
+
         public bool TrySpawnObject(Vector3 spawnPoint, Vector3 spawnNormal)
         {
             if (m_OnlySpawnInView)
@@ -206,8 +224,10 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
 
             var objectIndex = isSpawnOptionRandomized ? Random.Range(0, m_ObjectPrefabs.Count) : m_SpawnOptionIndex;
             var newObject = Instantiate(m_ObjectPrefabs[objectIndex]);
+            newObject.transform.parent = parentContainer;
             if (m_SpawnAsChildren)
-                newObject.transform.parent = transform;
+                newObject.transform.parent = parentContainer;
+            //parent changed
 
             newObject.transform.position = spawnPoint;
             EnsureFacingCamera();
